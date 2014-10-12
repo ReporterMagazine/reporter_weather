@@ -1,6 +1,4 @@
-
-
-<div id="weatherBox">
+<div id="weatherBox" style="background-color:<?php echo $weather_array['color']; ?>;">
 	<div style='width:50%;'>
 		<img src="<?php echo $weather_array['file_name']; ?>" style='width:100%;'>
 	</div>
