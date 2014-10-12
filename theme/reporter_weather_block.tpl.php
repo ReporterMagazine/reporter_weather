@@ -1,11 +1,4 @@
-<style>
-#weatherBox {
-	width:100%;
-	background-color:<?php echo $weather_array['color']; ?>;
-	position:relative;
-	border-radius:3px;
-}
-</style>
+
 
 <div id="weatherBox">
 	<div style='width:50%;'>
