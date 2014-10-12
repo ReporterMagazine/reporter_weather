@@ -70,7 +70,7 @@ function reporter_weather_theme() {
 	$base = array(
 		'path' => "$module_path/theme",
 	);
-	drupal_add_css("#weatherBox {width:100%;background-color:$weather_array['color'];position:relative;border-radius:3px;");
+	drupal_add_css("#weatherBox{width:100%\;background-color:$weather_array['color']\;position:relative\;border-radius:3px\;");
 	return array(
 		'reporter_weather_render_array' => $base + array(
 			'template' => 'reporter_weather_block',
