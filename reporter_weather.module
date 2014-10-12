@@ -1,0 +1,80 @@
+<?php
+
+/**
+ * Create petition titles
+*/
+function reporter_weather_render_array() {
+	$module_path = drupal_get_path('module', 'reporter_weather');
+	
+	$weather_array = array();
+	
+	//icon file 
+	$weather_XML = simplexml_load_file('http://w1.weather.gov/xml/current_obs/KROC.xml');
+	$weather_file_prefix = explode('.', $weather_XML->icon_url_name);
+	$weather_array['file_name'] = "$module_path/Reporter_Weather_Named/$weather_file_prefix[0].jpg";
+	
+	//temperature info
+	$weather_array['degreesF'] = $weather_XML->temp_f;
+	$weather_array['degreesC'] = $weather_XML->temp_c;
+	
+	//weather metrics
+	$weather_array['weather'] = $weather_XML->weather;
+	$weather_array['winds'] = $weather_XML->wind_mph;
+	$weather_array['dew_point'] = $weather_XML->dewpoint_f;
+	$weather_array['humidity'] = $weather_XML->relative_humidity;
+	
+	//sun color determiniation
+	$rise_zenith = 90+(25/60);
+	$set_zenith = 90+(40/60);
+	$offset = timezone_offset_get();
+
+	$now = strtotime("now");
+	$sunRise = date_sunrise(strtotime("+1 day"), SUNFUNCS_RET_TIMESTAMP, 43.0844, -77.6749, $rise_zenith,$offset);
+	$sunSet = date_sunset($now, SUNFUNCS_RET_TIMESTAMP, 43.0844, -77.6749, $set_zenith,$offset);
+
+	if($sunRise >= $now && $sunSet <= $now) $weather_array['color'] = "#0f1418";
+	else $weather_array['color'] = "#f48b2f";
+
+	return theme('reporter_weather_render_array', array('weather_array' => $weather_array));
+}
+/**
+ * Create block info module
+*/
+function reporter_weather_block_info() {
+	$block['reporter_weather'] = array(
+		'info' => t('Reporter Weather Block'),
+		'cache' => DRUPAL_NO_CACHE,
+	);
+	return $block;
+}
+/**
+ * Create block for module
+*/
+function reporter_weather_block_view($delta) {
+	switch($delta) {
+		case 'reporter_weather' :
+			$block = array();
+			
+				$block['subject'] = t('Reporter Weather');
+				
+				$block['content'] = reporter_weather_render_array();
+			
+			return $block;
+	}
+}
+/**
+ * Theme hook for block
+*/
+function reporter_weather_theme() {
+	$module_path = drupal_get_path('module', 'reporter_weather');
+	$base = array(
+		'path' => "$module_path/theme",
+	);
+
+	return array(
+		'reporter_weather_render_array' => $base + array(
+			'template' => 'reporter_weather_block',
+			'variables' => array('weather_array' => NULL,),
+		),
+	);
+}
